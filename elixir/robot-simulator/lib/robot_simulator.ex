@@ -10,13 +10,9 @@ defmodule RobotSimulator do
   @spec create(direction :: atom, position :: {integer, integer}) :: any
   def create(direction \\ :north, position \\ {0, 0}) do
       cond do
-        !is_atom(direction) or
-        !Enum.member?(@directions, direction) ->
+        !valid_direction?(direction) ->
           {:error,  "invalid direction"}
-        !is_tuple(position) or
-        !(tuple_size(position) == 2) or
-        !is_integer(elem(position, 0)) or
-        !is_integer(elem(position, 1)) ->
+        !valid_position?(position) ->
           {:error,  "invalid position"}
         true -> %{direction: direction, position: position}
       end
@@ -67,4 +63,16 @@ defmodule RobotSimulator do
   """
   @spec position(robot :: any) :: {integer, integer}
   def position(robot), do: robot.position
+
+
+  defp valid_direction?(direction) do
+    is_atom(direction) and Enum.member?(@directions, direction)
+  end
+
+  defp valid_position?(position) do
+    is_tuple(position) and
+    tuple_size(position) == 2 and
+    is_integer(elem(position, 0)) and
+    is_integer(elem(position, 1))
+  end
 end
